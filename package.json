@@ -3,7 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "build": "npm run clean && babel ./src --out-dir dist",
+    "clean": "rimraf dist",
+    "dev": "babel-watch ./src/bin/www",
+    "server": "babel-node ./src/bin/www",
+    "start": "node ./src/bin/www",
+    "prod": "NODE_ENV=production npm run build && npm run start"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -11,6 +16,14 @@
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
-    "morgan": "~1.9.1"
+    "morgan": "~1.9.1",
+    "rimraf": "^3.0.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.7.0",
+    "@babel/core": "^7.7.2",
+    "@babel/node": "^7.7.0",
+    "@babel/preset-env": "^7.7.1",
+    "babel-watch": "^7.0.0"
   }
 }
