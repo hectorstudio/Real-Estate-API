@@ -10,7 +10,6 @@ import {
   updateAccount,
   verifyAccount,
 } from '../controllers/users';
-import admin from '../config/firebase';
 
 const router = express.Router();
 
@@ -37,17 +36,14 @@ router.post('/', (req, res) => {
 
 /* GET current user */
 router.get('/currentUser', auth, (req, res) => {
-  verifyToken(req, res).then((decodedToken) => {
-    console.log(decodedToken.uid);
-    getUserByFirebaseID(decodedToken.uid)
-      .then((data) => {
-        const response = data.rows.map(x => userSchema.toJs(x));
-        res.status(200).json(response);
-      })
-      .catch((err) => {
-        throw err;
-      });
-  });
+  getUserByFirebaseID(res.uid)
+    .then((data) => {
+      const response = data.rows.map(x => userSchema.toJs(x));
+      res.status(200).json(response);
+    })
+    .catch((err) => {
+      throw err;
+    });
 });
 
 // PATCH verify account route
