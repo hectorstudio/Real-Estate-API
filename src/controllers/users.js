@@ -14,7 +14,6 @@ export const getUserByFirebaseID = (firebaseId) =>
 export const addNewUser = (userData) => {
   const {
     email,
-    password,
     firstName,
     lastName,
     firebaseId,
@@ -23,8 +22,8 @@ export const addNewUser = (userData) => {
   const joinDate = new Date().getTime() / 1000;
 
   return pool.query(
-    'INSERT INTO users (email, password, first_name, last_name, firebase_id, join_date) values ($1, $2, $3, $4, $5, to_timestamp($6)) RETURNING *',
-    [email, password, firstName, lastName, firebaseId, joinDate]
+    'INSERT INTO users (email, first_name, last_name, firebase_id, join_date) values ($1, $2, $3, $4, to_timestamp($5)) RETURNING *',
+    [email, firstName, lastName, firebaseId, joinDate]
   );
 }
 

@@ -1,5 +1,6 @@
 import express from 'express';
 
+import auth from '../middlewares/auth';
 import userSchema from '../schemas/users';
 import {
   addNewUser,
@@ -9,48 +10,13 @@ import {
   updateAccount,
   verifyAccount,
 } from '../controllers/users';
+import admin from '../config/firebase';
 
 const router = express.Router();
 
-/* GET users listing. */
-router.get('/', (req, res) => {
-  getAllUsers()
-    .then((data) => {
-      const response = data.rows.map(x => userSchema.toJs(x));
-      res.status(200).json(response);
-    })
-    .catch((err) => {
-      throw err;
-    });
-});
-
-/* GET single user by ID */
-router.get('/:userId', (req, res) => {
-  const { userId } = req.params;
-
-  getUserById(userId)
-    .then((data) => {
-      const response = data.rows.map(x => userSchema.toJs(x));
-      res.status(200).json(response);
-    })
-    .catch((err) => {
-      throw err;
-    });
-});
-
-/* GET single user by firebase ID */
-router.get('/firebase/:firebaseId', (req, res) => {
-  const { firebaseId } = req.params;
-
-  getUserByFirebaseID(firebaseId)
-    .then((data) => {
-      const response = data.rows.map(x => userSchema.toJs(x));
-      res.status(200).json(response);
-    })
-    .catch((err) => {
-      throw err;
-    });
-});
+//
+// PUBLIC
+//
 
 /* ADD single user */
 router.post('/', (req, res) => {
@@ -65,8 +31,27 @@ router.post('/', (req, res) => {
     });
 });
 
+//
+// PRIVATE
+//
+
+/* GET current user */
+router.get('/currentUser', auth, (req, res) => {
+  verifyToken(req, res).then((decodedToken) => {
+    console.log(decodedToken.uid);
+    getUserByFirebaseID(decodedToken.uid)
+      .then((data) => {
+        const response = data.rows.map(x => userSchema.toJs(x));
+        res.status(200).json(response);
+      })
+      .catch((err) => {
+        throw err;
+      });
+  });
+});
+
 // PATCH verify account route
-router.patch('/:userId/verify', (req, res) => {
+router.patch('/:userId/verify', auth, (req, res) => {
   const { userId } = req.params;
 
   verifyAccount(userId)
@@ -81,7 +66,7 @@ router.patch('/:userId/verify', (req, res) => {
 });
 
 // PATCH account update route
-router.patch('/:userId', (req, res) => {
+router.patch('/:userId', auth, (req, res) => {
   const { userId } = req.params;
   const values = req.body;
 
@@ -95,5 +80,47 @@ router.patch('/:userId', (req, res) => {
       throw err;
     });
 });
+
+//
+
+/* GET users listing. */
+// router.get('/', (req, res) => {
+//   getAllUsers()
+//     .then((data) => {
+//       const response = data.rows.map(x => userSchema.toJs(x));
+//       res.status(200).json(response);
+//     })
+//     .catch((err) => {
+//       throw err;
+//     });
+// });
+
+/* GET single user by ID */
+// router.get('/:userId', (req, res) => {
+//   const { userId } = req.params;
+
+//   getUserById(userId)
+//     .then((data) => {
+//       const response = data.rows.map(x => userSchema.toJs(x));
+//       res.status(200).json(response);
+//     })
+//     .catch((err) => {
+//       throw err;
+//     });
+// });
+
+/* GET single user by firebase ID */
+// router.get('/firebase/:firebaseId', (req, res) => {
+//   const { firebaseId } = req.params;
+
+//   getUserByFirebaseID(firebaseId)
+//     .then((data) => {
+//       const response = data.rows.map(x => userSchema.toJs(x));
+//       res.status(200).json(response);
+//     })
+//     .catch((err) => {
+//       throw err;
+//     });
+// });
 
 export default router;
