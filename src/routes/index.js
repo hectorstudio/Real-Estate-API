@@ -1,9 +1,8 @@
-var express = require('express');
-var router = express.Router();
+import usersRouter from './users';
+import notFound from './notFound';
+import errorHandler from './errorHandler';
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
-
-export default router;
+export default (app) => app
+  .use('/users', usersRouter)
+  .use(notFound)
+  .use(errorHandler);
