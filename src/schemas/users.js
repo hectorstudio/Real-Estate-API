@@ -7,6 +7,5 @@ export default new Schema({
   isVerified: 'is_verified',
   joinDate: 'join_date',
   lastName: 'last_name',
-  password: 'password',
   phone: 'phone',
 });

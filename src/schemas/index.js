@@ -10,9 +10,14 @@ export default function Schema(obj) {
       return acc;
     }, {});
 
-  this.fromDb = (value) =>
-    Object.entries(obj).reduce((acc, key) => ({
-      ...acc,
-      [key[0]]: value[key[1]],
-    }), {});
+  this.toJs = (value) =>
+    Object.entries(obj).reduce((acc, key) => {
+      if (value[key[1]]) {
+        return {
+          ...acc,
+          [key[0]]: value[key[1]],
+        };
+      }
+      return acc;
+    }, {});
 };

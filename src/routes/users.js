@@ -1,11 +1,12 @@
 import express from 'express';
 
-import { getAllUsers, getUser, addNewUser } from '../controllers/users';
+import userSchema from '../schemas/users';
+import { getAllUsers, getUser, addNewUser, verifyAccount, updateAccount } from '../controllers/users';
 
 const router = express.Router();
 
 /* GET users listing. */
-router.get('/', function (req, res) {
+router.get('/', (req, res) => {
   getAllUsers()
     .then((data) => {
       res.status(200).json(data.rows);
@@ -16,7 +17,7 @@ router.get('/', function (req, res) {
 });
 
 /* GET single user */
-router.get('/:userId', function (req, res) {
+router.get('/:userId', (req, res) => {
   const { userId } = req.params;
 
   getUser(userId)
@@ -29,10 +30,11 @@ router.get('/:userId', function (req, res) {
 });
 
 /* ADD single user */
-router.post('/', function (req, res) {
+router.post('/', (req, res) => {
   addNewUser(req.body)
     .then((data) => {
-      res.status(200).json(data.rows);
+      const response = userSchema.toJs(data.rows[0]);
+      res.status(200).json([response]);
     })
     .catch((err) => {
       res.status(500);
@@ -40,8 +42,35 @@ router.post('/', function (req, res) {
     });
 });
 
-// TODO: Verify account route
+// PATCH verify account route
+router.patch('/:userId/verify', (req, res) => {
+  const { userId } = req.params;
 
-// TODO: Account update route
+  verifyAccount(userId)
+    .then((data) => {
+      const response = userSchema.toJs(data.rows[0]);
+      res.status(200).json([response]);
+    })
+    .catch((err) => {
+      res.status(500);
+      throw err;
+    });
+});
 
-module.exports = router;
+// PATCH account update route
+router.patch('/:userId', (req, res) => {
+  const { userId } = req.params;
+  const values = req.body;
+
+  updateAccount(userId, values)
+    .then((data) => {
+      const response = userSchema.toJs(data.rows[0]);
+      res.status(200).json([response]);
+    })
+    .catch((err) => {
+      res.status(500);
+      throw err;
+    });
+});
+
+export default router;
