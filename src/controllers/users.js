@@ -5,8 +5,11 @@ import { updateValues } from '../helpers';
 export const getAllUsers = () =>
   pool.query('SELECT * FROM users');
 
-export const getUser = (userId) =>
-  pool.query('SELECT * FROM users WHERE id=$1', [userId]);
+export const getUserById = (userId) =>
+  pool.query('SELECT * FROM users WHERE id = $1', [userId]);
+
+export const getUserByFirebaseID = (firebaseId) =>
+  pool.query('SELECT * FROM users WHERE firebase_id = $1', [firebaseId]);
 
 export const addNewUser = (userData) => {
   const {

@@ -1,7 +1,14 @@
 import express from 'express';
 
 import userSchema from '../schemas/users';
-import { getAllUsers, getUser, addNewUser, verifyAccount, updateAccount } from '../controllers/users';
+import {
+  addNewUser,
+  getAllUsers,
+  getUserByFirebaseID,
+  getUserById,
+  updateAccount,
+  verifyAccount,
+} from '../controllers/users';
 
 const router = express.Router();
 
@@ -9,20 +16,36 @@ const router = express.Router();
 router.get('/', (req, res) => {
   getAllUsers()
     .then((data) => {
-      res.status(200).json(data.rows);
+      const response = data.rows.map(x => userSchema.toJs(x));
+      res.status(200).json(response);
     })
     .catch((err) => {
       throw err;
     });
 });
 
-/* GET single user */
+/* GET single user by ID */
 router.get('/:userId', (req, res) => {
   const { userId } = req.params;
 
-  getUser(userId)
+  getUserById(userId)
     .then((data) => {
-      res.status(200).json(data.rows);
+      const response = data.rows.map(x => userSchema.toJs(x));
+      res.status(200).json(response);
+    })
+    .catch((err) => {
+      throw err;
+    });
+});
+
+/* GET single user by firebase ID */
+router.get('/firebase/:firebaseId', (req, res) => {
+  const { firebaseId } = req.params;
+
+  getUserByFirebaseID(firebaseId)
+    .then((data) => {
+      const response = data.rows.map(x => userSchema.toJs(x));
+      res.status(200).json(response);
     })
     .catch((err) => {
       throw err;
