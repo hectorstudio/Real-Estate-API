@@ -7,7 +7,7 @@
     "clean": "rimraf dist",
     "dev": "babel-watch ./src/bin/www",
     "server": "babel-node ./src/bin/www",
-    "start": "node ./src/bin/www",
+    "start": "node ./dist/bin/www",
     "prod": "NODE_ENV=production npm run build && npm run start"
   },
   "dependencies": {
