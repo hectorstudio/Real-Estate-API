@@ -9,7 +9,13 @@ export const getUserById = (userId) =>
   pool.query('SELECT * FROM users WHERE id = $1', [userId]);
 
 export const getUserByFirebaseID = (firebaseId) =>
-  pool.query('SELECT * FROM users WHERE firebase_id = $1', [firebaseId]);
+  pool.query('SELECT * FROM users WHERE firebase_id = $1', [firebaseId])
+    .then((data) => {
+      if (data.rows.length) {
+        return data.rows[0];
+      }
+      throw new Error('getUserByFirebaseID: user not found');
+    });
 
 export const addNewUser = (userData) => {
   const {

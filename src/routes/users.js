@@ -37,86 +37,47 @@ router.post('/', (req, res) => {
 /* GET current user */
 router.get('/currentUser', auth, (req, res) => {
   getUserByFirebaseID(res.uid)
-    .then((data) => {
-      const response = data.rows.map(x => userSchema.toJs(x));
+    .then((user) => {
+      const response = userSchema.toJs(user);
       res.status(200).json(response);
     })
     .catch((err) => {
-      throw err;
-    });
-});
-
-// PATCH verify account route
-router.patch('/:userId/verify', auth, (req, res) => {
-  const { userId } = req.params;
-
-  verifyAccount(userId)
-    .then((data) => {
-      const response = userSchema.toJs(data.rows[0]);
-      res.status(200).json([response]);
-    })
-    .catch((err) => {
-      res.status(500);
-      throw err;
+      res.status(404);
+      console.error(err)
     });
 });
 
 // PATCH account update route
-router.patch('/:userId', auth, (req, res) => {
-  const { userId } = req.params;
+router.patch('/', auth, (req, res) => {
   const values = req.body;
 
-  updateAccount(userId, values)
-    .then((data) => {
-      const response = userSchema.toJs(data.rows[0]);
-      res.status(200).json([response]);
-    })
-    .catch((err) => {
-      res.status(500);
-      throw err;
+  getUserByFirebaseID(res.uid)
+    .then((user) => {
+      updateAccount(user.id, values)
+        .then((data) => {
+          const response = userSchema.toJs(data.rows[0]);
+          res.status(200).json(response);
+        })
+        .catch((err) => {
+          res.status(500);
+          console.error(err);
+        });
     });
 });
 
-//
-
-/* GET users listing. */
-// router.get('/', (req, res) => {
-//   getAllUsers()
-//     .then((data) => {
-//       const response = data.rows.map(x => userSchema.toJs(x));
-//       res.status(200).json(response);
-//     })
-//     .catch((err) => {
-//       throw err;
-//     });
-// });
-
-/* GET single user by ID */
-// router.get('/:userId', (req, res) => {
-//   const { userId } = req.params;
-
-//   getUserById(userId)
-//     .then((data) => {
-//       const response = data.rows.map(x => userSchema.toJs(x));
-//       res.status(200).json(response);
-//     })
-//     .catch((err) => {
-//       throw err;
-//     });
-// });
-
-/* GET single user by firebase ID */
-// router.get('/firebase/:firebaseId', (req, res) => {
-//   const { firebaseId } = req.params;
-
-//   getUserByFirebaseID(firebaseId)
-//     .then((data) => {
-//       const response = data.rows.map(x => userSchema.toJs(x));
-//       res.status(200).json(response);
-//     })
-//     .catch((err) => {
-//       throw err;
-//     });
-// });
+// PATCH verify account route
+router.patch('/verify', auth, (req, res) => {
+  getUserByFirebaseID(res.uid)
+    .then((user) =>
+      verifyAccount(user.id)
+        .then((data) => {
+          const response = userSchema.toJs(data.rows[0]);
+          res.status(200).json([response]);
+        })
+        .catch((err) => {
+          res.status(500);
+          console.error(err);
+        }));
+});
 
 export default router;
