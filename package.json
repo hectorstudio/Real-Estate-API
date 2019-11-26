@@ -5,10 +5,11 @@
   "scripts": {
     "build": "npm run clean && babel ./src --out-dir dist",
     "clean": "rimraf dist",
+    "deploy": "yarn build && gcloud app deploy",
     "dev": "babel-watch ./src/bin/www",
+    "prod": "NODE_ENV=production npm run build && npm run start",
     "server": "babel-node ./src/bin/www",
-    "start": "node ./dist/bin/www",
-    "prod": "NODE_ENV=production npm run build && npm run start"
+    "start": "node ./dist/bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",

@@ -25,7 +25,7 @@ router.post('/', (req, res) => {
       res.status(200).json([response]);
     })
     .catch((err) => {
-      res.status(500);
+      res.status(500).json(err);
       throw err;
     });
 });
@@ -42,8 +42,8 @@ router.get('/currentUser', auth, (req, res) => {
       res.status(200).json(response);
     })
     .catch((err) => {
-      res.status(404);
-      console.error(err)
+      res.status(404).json(err);
+      console.error(err);
     });
 });
 
@@ -59,8 +59,8 @@ router.patch('/', auth, (req, res) => {
           res.status(200).json(response);
         })
         .catch((err) => {
-          res.status(500);
-          console.error(err);
+          res.status(500).json(err);
+          console.error(err)
         });
     });
 });
@@ -75,7 +75,7 @@ router.patch('/verify', auth, (req, res) => {
           res.status(200).json([response]);
         })
         .catch((err) => {
-          res.status(500);
+          res.status(500).json(err);
           console.error(err);
         }));
 });
