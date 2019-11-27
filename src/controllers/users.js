@@ -1,3 +1,5 @@
+import uuidv4 from 'uuid/v4';
+
 import { pool } from '../config/db';
 import userSchema from '../schemas/users';
 import { updateValues } from '../helpers';
@@ -26,10 +28,11 @@ export const addNewUser = (userData) => {
   } = userData;
 
   const joinDate = new Date().getTime() / 1000;
+  const userId = uuidv4();
 
   return pool.query(
-    'INSERT INTO users (email, first_name, last_name, firebase_id, join_date) values ($1, $2, $3, $4, to_timestamp($5)) RETURNING *',
-    [email, firstName, lastName, firebaseId, joinDate]
+    'INSERT INTO users (id, email, first_name, last_name, firebase_id, join_date) values ($1, $2, $3, $4, to_timestamp($5)) RETURNING *',
+    [id, email, firstName, lastName, firebaseId, joinDate]
   );
 }
 
