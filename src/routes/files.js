@@ -1,5 +1,4 @@
 import express from 'express';
-import fetch from 'node-fetch';
 
 import { filesBucket } from '../config/storage';
 

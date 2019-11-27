@@ -6,6 +6,7 @@ export default new Schema({
   email: 'email',
   firebaseId: 'firebase_id',
   firstName: 'first_name',
+  id: 'id',
   isVerified: 'is_verified',
   joinDate: 'join_date',
   lastName: 'last_name',
