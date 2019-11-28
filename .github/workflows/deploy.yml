@@ -24,4 +24,4 @@ jobs:
         PROJECT_ID: upheld-clone-259000
         APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
       with:
-        args: app deploy
+        args: app deploy --quiet
