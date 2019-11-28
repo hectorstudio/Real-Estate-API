@@ -1,0 +1,33 @@
+{
+  "env": {
+    "jest/globals": true
+  },
+  "extends": "airbnb-base",
+  "parser": "babel-eslint",
+  "plugins": [
+    "babel",
+    "jest"
+  ],
+  "rules": {
+    "babel/semi": 0,
+    "import/no-cycle": 0,
+    "import/prefer-default-export": 0,
+    "jest/consistent-test-it": ["error", {
+      "fn": "it",
+      "withinDescribe": "it"
+    }],
+    "jest/prefer-called-with": ["warn"],
+    "jest/prefer-todo": ["error"],
+    "jest/prefer-to-be-null": ["error"],
+    "jest/prefer-to-be-undefined": ["error"],
+    "jest/prefer-to-contain": ["error"],
+    "jest/prefer-to-have-length": ["error"],
+    "max-len": 0,
+    "no-param-reassign": 0,
+    "no-underscore-dangle": ["error", { "allow": ["_params"] }],
+    "sort-keys": ["error", "asc", {
+      "caseSensitive": false,
+      "natural": true
+    }]
+  }
+}
