@@ -1,3 +1,6 @@
+// On CI, this file is missing and eslint can throw an error
+/* eslint-disable import/no-unresolved */
+
 import { Storage } from '@google-cloud/storage';
 import path from 'path';
 
