@@ -27,7 +27,7 @@ export const addNewUser = (userData) => {
   const userId = uuidv4();
 
   return pool.query(
-    'INSERT INTO users (id, email, first_name, last_name, firebase_id, join_date) values ($1, $2, $3, $4, to_timestamp($5)) RETURNING *',
+    'INSERT INTO users (id, email, first_name, last_name, firebase_id, join_date) values ($1, $2, $3, $4, $5, to_timestamp($6)) RETURNING *',
     [userId, email, firstName, lastName, firebaseId, joinDate],
   );
 };
