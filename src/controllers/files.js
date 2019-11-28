@@ -5,6 +5,13 @@ import { pool } from '../config/db';
 
 export const getAllFiles = () => pool.query('SELECT * FROM files');
 
+export const getFileById = (fileId) => pool.query(`SELECT * FROM files WHERE id='${fileId}'`).then((data) => {
+  if (data.rows && data.rows.length) {
+    return data.rows[0];
+  }
+  return undefined;
+});
+
 export const addNewFile = (fileData, firebaseId) => {
   const {
     name,

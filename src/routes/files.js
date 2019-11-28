@@ -3,7 +3,7 @@ import express from 'express';
 import fileSchema from '../schemas/files';
 import auth from '../middlewares/auth';
 import { filesBucket } from '../config/storage';
-import { addNewFile, getAllFiles } from '../controllers/files';
+import { addNewFile, getAllFiles, getFileById } from '../controllers/files';
 
 const router = express.Router();
 
@@ -18,6 +18,31 @@ router.get('/', auth, (req, res) => {
       res.status(404).json(err);
       console.error(err);
     });
+});
+
+/* Get download link */
+router.get('/download/:fileId', auth, (req, res) => {
+  const { fileId } = req.params;
+
+  getFileById(fileId).then((file) => {
+    if (!file) res.status(404).json('File not found');
+
+    const expires = Date.now() + 1000 * 60 * 60; // One hour
+
+    const config = {
+      action: 'read',
+      expires,
+    };
+
+    filesBucket.file(file.path).getSignedUrl(config)
+      .then((url) => {
+        res.status(200).json(url[0]);
+      })
+      .catch((err) => {
+        res.status(500).json('Could not generate signed download link');
+        console.error(err);
+      });
+  });
 });
 
 /* Add a new file */
