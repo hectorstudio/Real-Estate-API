@@ -34,6 +34,19 @@ router.post('/', (req, res) => {
 // PRIVATE
 //
 
+/* GET all users */
+router.get('/', auth, (req, res) => {
+  getAllUsers()
+    .then((data) => {
+      const response = data.rows.map((x) => userSchema.toJs(x));
+      res.status(200).json(response);
+    })
+    .catch((err) => {
+      res.status(404).json(err);
+      console.error(err);
+    });
+});
+
 /* GET current user */
 router.get('/currentUser', auth, (req, res) => {
   getUserByFirebaseID(res.uid)
