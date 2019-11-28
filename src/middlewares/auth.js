@@ -11,15 +11,15 @@ export default (req, res, next) => {
 
     const idToken = authorization.replace('Bearer ', '');
 
-    return admin.auth().verifyIdToken(idToken)
+    admin.auth().verifyIdToken(idToken)
       .then((token) => {
         res.uid = token.uid;
         next();
       })
-      .catch ((error) => {
+      .catch(() => {
         unauthorized(res);
       });
-  } catch(err) {
+  } catch (err) {
     unauthorized(res);
   }
 };

@@ -29,8 +29,8 @@ router.post('/', auth, (req, res) => {
   }
 
   const fileData = {
-    name: name,
-    path: `$id/${name}`
+    name,
+    path: `$id/${name}`,
   };
 
   addNewFile(fileData, res.uid).then((data) => {
@@ -50,10 +50,10 @@ router.post('/', auth, (req, res) => {
         console.error(err);
       });
   })
-  .catch((err) => {
-    res.status(500).json(err);
-    console.error(err);
-  });
+    .catch((err) => {
+      res.status(500).json(err);
+      console.error(err);
+    });
 });
 
 export default router;

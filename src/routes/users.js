@@ -6,7 +6,6 @@ import {
   addNewUser,
   getAllUsers,
   getUserByFirebaseID,
-  getUserById,
   updateAccount,
   verifyAccount,
 } from '../controllers/users';
@@ -73,7 +72,7 @@ router.patch('/', auth, (req, res) => {
         })
         .catch((err) => {
           res.status(500).json(err);
-          console.error(err)
+          console.error(err);
         });
     });
 });
@@ -81,16 +80,15 @@ router.patch('/', auth, (req, res) => {
 // PATCH verify account route
 router.patch('/verify', auth, (req, res) => {
   getUserByFirebaseID(res.uid)
-    .then((user) =>
-      verifyAccount(user.id)
-        .then((data) => {
-          const response = userSchema.toJs(data.rows[0]);
-          res.status(200).json([response]);
-        })
-        .catch((err) => {
-          res.status(500).json(err);
-          console.error(err);
-        }));
+    .then((user) => verifyAccount(user.id)
+      .then((data) => {
+        const response = userSchema.toJs(data.rows[0]);
+        res.status(200).json([response]);
+      })
+      .catch((err) => {
+        res.status(500).json(err);
+        console.error(err);
+      }));
 });
 
 export default router;

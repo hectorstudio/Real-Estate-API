@@ -1,4 +1,3 @@
-import createError from 'http-errors';
 import express from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
@@ -7,7 +6,7 @@ import cors from 'cors';
 
 import router from './routes';
 
-var app = express();
+const app = express();
 
 app.use(logger('dev'));
 app.use(cors());

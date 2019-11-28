@@ -1,4 +1,4 @@
-import Schema from './';
+import Schema from '.';
 
 export default new Schema({
   address: 'address',
