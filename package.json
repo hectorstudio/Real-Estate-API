@@ -5,7 +5,7 @@
   "scripts": {
     "build": "npm run clean && babel ./src --out-dir dist",
     "clean": "rimraf dist",
-    "deploy": "yarn build && gcloud app deploy",
+    "deploy": "yarn build && gcloud app deploy --quiet",
     "dev": "babel-watch ./src/bin/www",
     "lint": "eslint src",
     "prod": "NODE_ENV=production npm run build && npm run start",
