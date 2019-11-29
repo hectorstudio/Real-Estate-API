@@ -8,4 +8,5 @@ export default new Schema({
   modifyUserId: 'modify_user_id',
   name: 'name',
   path: 'path',
+  status: 'status',
 });
