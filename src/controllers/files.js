@@ -22,6 +22,7 @@ export const addNewFile = (fileData, firebaseId) => {
   const {
     name,
     path,
+    size,
   } = fileData;
 
   const id = uuidv4();
@@ -29,8 +30,8 @@ export const addNewFile = (fileData, firebaseId) => {
   const addDate = new Date().getTime() / 1000;
 
   return pool.query(
-    `INSERT INTO files (id, name, path, add_date, status, add_user_id) values ($1, $2, $3, to_timestamp($4), $5, (SELECT id from users WHERE firebase_id='${firebaseId}')) RETURNING *`,
-    [id, name, filePath, addDate, FILE_STATUS.UPLOADING],
+    `INSERT INTO files (id, name, path, add_date, status, size, add_user_id) values ($1, $2, $3, to_timestamp($4), $5, $6, (SELECT id from users WHERE firebase_id='${firebaseId}')) RETURNING *`,
+    [id, name, filePath, addDate, FILE_STATUS.UPLOADING, size],
   );
 };
 
@@ -38,4 +39,9 @@ export const addNewFile = (fileData, firebaseId) => {
 export const deleteFile = (fileId) => pool.query(
   'UPDATE files SET status = $1 WHERE id = $2 RETURNING *',
   [FILE_STATUS.DELETED, fileId],
+);
+
+export const deleteFiles = (ids) => pool.query(
+  `UPDATE files SET status = $1 WHERE id IN(${ids.map((x) => `'${x}'`).join(',')}) RETURNING *`,
+  [FILE_STATUS.DELETED],
 );

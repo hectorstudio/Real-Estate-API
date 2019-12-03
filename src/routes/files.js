@@ -6,6 +6,7 @@ import { filesBucket } from '../config/storage';
 import {
   addNewFile,
   deleteFile,
+  deleteFiles,
   getAllFiles,
   getFileById,
 } from '../controllers/files';
@@ -52,7 +53,7 @@ router.get('/download/:fileId', auth, (req, res) => {
 
 /* Add a new file */
 router.post('/', auth, (req, res) => {
-  const { name } = req.body;
+  const { name, size } = req.body;
 
   if (!name) {
     res.status(400).json({ message: 'File name not included in request' });
@@ -61,6 +62,7 @@ router.post('/', auth, (req, res) => {
   const fileData = {
     name,
     path: `$id/${name}`,
+    size,
   };
 
   addNewFile(fileData, res.uid).then((data) => {
@@ -95,6 +97,19 @@ router.delete('/:fileId', auth, (req, res) => {
   })
     .catch((err) => {
       res.status(500).json('Could not delete a file');
+      console.error(err);
+    });
+});
+
+/* Delete files */
+router.delete('/', auth, (req, res) => {
+  const ids = req.body;
+
+  deleteFiles(ids).then(() => {
+    res.status(200).json({});
+  })
+    .catch((err) => {
+      res.status(500).json('Could not delete files');
       console.error(err);
     });
 });
