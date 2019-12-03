@@ -3,9 +3,15 @@ import uuidv4 from 'uuid/v4';
 import { FILE_STATUS } from '../constants';
 import { pool } from '../config/db';
 
-export const getAllFiles = () => pool.query('SELECT * FROM files');
+export const getAllFiles = () => pool.query(
+  'SELECT * FROM files WHERE status != $1',
+  [FILE_STATUS.DELETED],
+);
 
-export const getFileById = (fileId) => pool.query(`SELECT * FROM files WHERE id='${fileId}'`).then((data) => {
+export const getFileById = (fileId) => pool.query(
+  'SELECT * FROM files WHERE id = $1 AND status != $2',
+  [fileId, FILE_STATUS.DELETED],
+).then((data) => {
   if (data.rows && data.rows.length) {
     return data.rows[0];
   }
@@ -27,3 +33,9 @@ export const addNewFile = (fileData, firebaseId) => {
     [id, name, filePath, addDate, FILE_STATUS.UPLOADING],
   );
 };
+
+// TODO: Handle permissions
+export const deleteFile = (fileId) => pool.query(
+  'UPDATE files SET status = $1 WHERE id = $2 RETURNING *',
+  [FILE_STATUS.DELETED, fileId],
+);

@@ -3,7 +3,12 @@ import express from 'express';
 import fileSchema from '../schemas/files';
 import auth from '../middlewares/auth';
 import { filesBucket } from '../config/storage';
-import { addNewFile, getAllFiles, getFileById } from '../controllers/files';
+import {
+  addNewFile,
+  deleteFile,
+  getAllFiles,
+  getFileById,
+} from '../controllers/files';
 
 const router = express.Router();
 
@@ -77,6 +82,19 @@ router.post('/', auth, (req, res) => {
   })
     .catch((err) => {
       res.status(500).json(err);
+      console.error(err);
+    });
+});
+
+/* Delete file */
+router.delete('/:fileId', auth, (req, res) => {
+  const { fileId } = req.params;
+
+  deleteFile(fileId).then(() => {
+    res.status(200).json({});
+  })
+    .catch((err) => {
+      res.status(500).json('Could not delete a file');
       console.error(err);
     });
 });
