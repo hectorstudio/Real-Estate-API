@@ -9,6 +9,8 @@ export const getBuildingById = (userId) => pool.query('SELECT * FROM buildings W
 export const addNewBuilding = (data) => {
   const {
     address,
+    city,
+    company,
     country,
     name,
   } = data;
@@ -17,7 +19,7 @@ export const addNewBuilding = (data) => {
   const userId = uuidv4();
 
   return pool.query(
-    'INSERT INTO buildings (id, name, address, country, add_date) values ($1, $2, $3, $4, to_timestamp($5)) RETURNING *',
-    [userId, name, address, country, addDate],
+    'INSERT INTO buildings (id, name, address, country, company, city, add_date) values ($1, $2, $3, $4, $5, $6, to_timestamp($7)) RETURNING *',
+    [userId, name, address, country, company, city, addDate],
   );
 };
