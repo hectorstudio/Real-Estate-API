@@ -8,6 +8,11 @@ export const getAllFiles = () => pool.query(
   [FILE_STATUS.DELETED],
 );
 
+export const getFilesByBuildingId = (buildingId) => pool.query(
+  'SELECT * FROM files WHERE status != $1 AND building_id = $2',
+  [FILE_STATUS.DELETED, buildingId],
+);
+
 export const getFileById = (fileId) => pool.query(
   'SELECT * FROM files WHERE id = $1 AND status != $2',
   [fileId, FILE_STATUS.DELETED],
@@ -18,7 +23,7 @@ export const getFileById = (fileId) => pool.query(
   return undefined;
 });
 
-export const addNewFile = (fileData, firebaseId) => {
+export const addNewFile = (buildingId, fileData, firebaseId) => {
   const {
     name,
     path,
@@ -26,12 +31,12 @@ export const addNewFile = (fileData, firebaseId) => {
   } = fileData;
 
   const id = uuidv4();
-  const filePath = path.replace('$id', id);
+  const filePath = path.replace('$buildingId', buildingId).replace('$id', id);
   const addDate = new Date().getTime() / 1000;
 
   return pool.query(
-    `INSERT INTO files (id, name, path, add_date, status, size, add_user_id) values ($1, $2, $3, to_timestamp($4), $5, $6, (SELECT id from users WHERE firebase_id='${firebaseId}')) RETURNING *`,
-    [id, name, filePath, addDate, FILE_STATUS.UPLOADING, size],
+    `INSERT INTO files (id, building_id, name, path, add_date, status, size, add_user_id) values ($1, $2, $3, $4, to_timestamp($5), $6, $7, (SELECT id from users WHERE firebase_id='${firebaseId}')) RETURNING *`,
+    [id, buildingId, name, filePath, addDate, FILE_STATUS.UPLOADING, size],
   );
 };
 

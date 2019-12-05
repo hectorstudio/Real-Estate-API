@@ -7,5 +7,6 @@ export default new Schema({
   company: 'company',
   country: 'country',
   id: 'id',
+  modifyDate: 'modifyDate',
   name: 'name',
 });

@@ -9,6 +9,7 @@ import {
   deleteFiles,
   getAllFiles,
   getFileById,
+  getFilesByBuildingId,
 } from '../controllers/files';
 
 const router = express.Router();
@@ -16,6 +17,21 @@ const router = express.Router();
 /* Get all files */
 router.get('/', auth, (req, res) => {
   getAllFiles()
+    .then((data) => {
+      const files = data.rows.map((x) => fileSchema.toJs(x));
+      res.status(200).json(files);
+    })
+    .catch((err) => {
+      res.status(404).json(err);
+      console.error(err);
+    });
+});
+
+/* Get all files */
+router.get('/:buildingId', auth, (req, res) => {
+  const { buildingId } = req.params;
+
+  getFilesByBuildingId(buildingId)
     .then((data) => {
       const files = data.rows.map((x) => fileSchema.toJs(x));
       res.status(200).json(files);
@@ -52,7 +68,8 @@ router.get('/download/:fileId', auth, (req, res) => {
 });
 
 /* Add a new file */
-router.post('/', auth, (req, res) => {
+router.post('/:buildingId', auth, (req, res) => {
+  const { buildingId } = req.params;
   const { name, size } = req.body;
 
   if (!name) {
@@ -61,11 +78,11 @@ router.post('/', auth, (req, res) => {
 
   const fileData = {
     name,
-    path: `$id/${name}`,
+    path: `$buildingId/$id/${name}`,
     size,
   };
 
-  addNewFile(fileData, res.uid).then((data) => {
+  addNewFile(buildingId, fileData, res.uid).then((data) => {
     const file = data.rows[0];
     const fileObj = filesBucket.file(file.path);
 
