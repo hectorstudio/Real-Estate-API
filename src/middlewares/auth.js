@@ -11,6 +11,7 @@ export default (req, res, next) => {
 
     const idToken = authorization.replace('Bearer ', '');
 
+    // TODO: Save both firebase id and user id
     admin.auth().verifyIdToken(idToken)
       .then((token) => {
         res.uid = token.uid;
