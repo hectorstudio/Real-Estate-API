@@ -50,3 +50,8 @@ export const deleteFiles = (ids) => pool.query(
   `UPDATE files SET status = $1 WHERE id IN(${ids.map((x) => `'${x}'`).join(',')}) RETURNING *`,
   [FILE_STATUS.DELETED],
 );
+
+export const markAsUploadedFile = (id) => pool.query(
+  'UPDATE files SET status = $1 WHERE ID = $2 RETURNING *',
+  [FILE_STATUS.READY, id],
+);

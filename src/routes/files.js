@@ -10,6 +10,7 @@ import {
   getAllFiles,
   getFileById,
   getFilesByBuildingId,
+  markAsUploadedFile,
 } from '../controllers/files';
 
 const router = express.Router();
@@ -82,6 +83,7 @@ router.post('/:buildingId', auth, (req, res) => {
     size,
   };
 
+  // TODO: Move out of the router
   addNewFile(buildingId, fileData, res.uid).then((data) => {
     const file = data.rows[0];
     const fileObj = filesBucket.file(file.path);
@@ -127,6 +129,21 @@ router.delete('/', auth, (req, res) => {
   })
     .catch((err) => {
       res.status(500).json('Could not delete files');
+      console.error(err);
+    });
+});
+
+// TODO: Need to find better solutions - (Cloud Functions, Storage triggers)
+/* Mark file as successfully uploaded */
+router.patch('/success/:fileId', auth, (req, res) => {
+  const { fileId } = req.params;
+
+  markAsUploadedFile(fileId).then((data) => {
+    const file = data.rows[0];
+    res.status(200).json(fileSchema.toJs(file));
+  })
+    .catch((err) => {
+      res.status(500).json('Could not update file');
       console.error(err);
     });
 });
