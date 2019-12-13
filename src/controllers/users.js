@@ -7,6 +7,8 @@ export const getAllUsers = () => pool.query('SELECT * FROM users');
 
 export const getUserById = (userId) => pool.query('SELECT * FROM users WHERE id = $1', [userId]);
 
+export const getUserByEmail = (email) => pool.query('SELECT * FROM users WHERE email = $1', [email]);
+
 export const getUserByFirebaseID = (firebaseId) => pool.query('SELECT * FROM users WHERE firebase_id = $1', [firebaseId])
   .then((data) => {
     if (data.rows.length) {
