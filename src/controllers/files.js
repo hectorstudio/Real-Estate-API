@@ -1,6 +1,6 @@
 import uuidv4 from 'uuid/v4';
 
-import { FILE_STATUS } from '../constants';
+import { FILE_STATUS, STORAGE_PATHS } from '../constants';
 import { pool } from '../config/db';
 
 export const getAllFiles = () => pool.query(
@@ -26,17 +26,16 @@ export const getFileById = (fileId) => pool.query(
 export const addNewFile = (buildingId, fileData, firebaseId) => {
   const {
     name,
-    path,
     size,
   } = fileData;
 
   const id = uuidv4();
-  const filePath = path.replace('$buildingId', buildingId).replace('$id', id);
+  const path = STORAGE_PATHS.file(buildingId, id);
   const addDate = new Date().getTime() / 1000;
 
   return pool.query(
     `INSERT INTO files (id, building_id, name, path, add_date, status, size, add_user_id) values ($1, $2, $3, $4, to_timestamp($5), $6, $7, (SELECT id from users WHERE firebase_id='${firebaseId}')) RETURNING *`,
-    [id, buildingId, name, filePath, addDate, FILE_STATUS.UPLOADING, size],
+    [id, buildingId, name, path, addDate, FILE_STATUS.UPLOADING, size],
   );
 };
 

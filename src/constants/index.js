@@ -6,3 +6,7 @@ export const FILE_STATUS = {
   READY: 'READY', // 4. File is ready for view / download
   DELETED: 'DELETED', // 5. File is deleted
 };
+
+export const STORAGE_PATHS = {
+  file: (buildingId, fileId) => `buildings/${buildingId}/files/${fileId}`,
+};

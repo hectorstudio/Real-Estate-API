@@ -25,6 +25,15 @@ export const addUserPermissions = (userId, contentType, contentId, role) => {
   );
 };
 
+export const addUserPermissionsWithEmail = (email, contentType, contentId, role) => {
+  const id = uuidv4();
+
+  return pool.query(
+    'INSERT INTO permissions (id, email, content_type, content_id, role) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+    [id, email, contentType, contentId, role],
+  );
+};
+
 export const deleteUserPermissions = (userId, contentType, contentId) => pool.query(
   'DELETE FROM permissions WHERE user_id = $1 AND content_type = $2 AND content_id = $3 RETURNING *',
   [userId, contentType, contentId],

@@ -79,7 +79,6 @@ router.post('/:buildingId', auth, (req, res) => {
 
   const fileData = {
     name,
-    path: `$buildingId/$id/${name}`,
     size,
   };
 
