@@ -8,6 +8,9 @@ import router from './routes';
 
 const app = express();
 
+// Project root path
+global.projectPath = path.join(__dirname, '../');
+
 app.use(logger('dev'));
 app.use(cors());
 app.use(express.json({

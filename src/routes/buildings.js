@@ -1,4 +1,6 @@
 import express from 'express';
+import fs from 'fs';
+import path from 'path';
 
 import buildingSchema from '../schemas/buildings';
 import permissionSchema from '../schemas/permissions';
@@ -91,6 +93,10 @@ router.post('/:buildingId/cover', upload.single('file'), auth, (req, res) => {
       updateBuilding(buildingId, buildingSchema.toDb(values)).then((data) => {
         const response = buildingSchema.toJs(data.rows[0]);
         res.status(200).json(response);
+
+        // Remove uploaded file
+        const localFilePath = path.join(global.projectPath, file.path);
+        fs.unlink(localFilePath, () => {});
       });
     })
     .catch((err) => {
