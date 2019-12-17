@@ -12,6 +12,9 @@ import {
   addUserPermissions,
   deleteUserPermissions,
 } from '../controllers/permissions';
+import { upload } from '../config/upload';
+import { filesBucket } from '../config/storage';
+import { STORAGE_PATHS } from '../constants';
 
 const router = express.Router();
 
@@ -67,6 +70,36 @@ router.patch('/:buildingId', auth, (req, res) => {
     });
 });
 
+// POST building cover image upload
+router.post('/:buildingId/cover', upload.single('file'), auth, (req, res) => {
+  const { buildingId } = req.params;
+
+  const { file } = req;
+
+  const extension = file.originalname.split('.').reverse()[0];
+
+  const options = {
+    destination: STORAGE_PATHS.buildingCover(buildingId, `${file.filename}.${extension}`),
+    public: true,
+  };
+  filesBucket.upload(file.path, options)
+    .then((fileResponse) => {
+      const { mediaLink } = fileResponse[1];
+      const values = {
+        coverPath: mediaLink,
+      };
+      updateBuilding(buildingId, buildingSchema.toDb(values)).then((data) => {
+        const response = buildingSchema.toJs(data.rows[0]);
+        res.status(200).json(response);
+      });
+    })
+    .catch((err) => {
+      res.status(500).json(err);
+      console.error(err);
+    });
+});
+
+
 // PATCH building permissions route
 // TODO: Permissions
 router.patch('/:buildingId/permissions', auth, (req, res) => {
@@ -95,7 +128,15 @@ router.post('/:buildingId/permissions', auth, (req, res) => {
 
   getUserByEmail(email).then((userData) => {
     if (!userData.rows.length) {
-      res.status(404).json({});
+      addUserPermissions(email, CONTENT_TYPES.buildings, buildingId, role)
+        .then((data) => {
+          const response = permissionSchema.toJs(data.rows[0]);
+          res.status(200).json(response);
+        })
+        .catch((err) => {
+          res.status(500).json(err);
+          console.error(err);
+        });
       return;
     }
 

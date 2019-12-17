@@ -6,6 +6,7 @@ export default new Schema({
   city: 'city',
   company: 'company',
   country: 'country',
+  coverPath: 'cover_path',
   id: 'id',
   modifyDate: 'modify_date',
   name: 'name',
