@@ -1,12 +1,14 @@
-import usersRouter from './users';
-import filesRouter from './files';
 import buildingsRouter from './buildings';
-import notFound from './notFound';
 import errorHandler from './errorHandler';
+import filesRouter from './files';
+import notFound from './notFound';
+import portfoliosRouter from './portfolios';
+import usersRouter from './users';
 
 export default (app) => app
   .use('/buildings', buildingsRouter)
   .use('/files', filesRouter)
+  .use('/portfolios', portfoliosRouter)
   .use('/users', usersRouter)
-  .use(notFound)
-  .use(errorHandler);
+  .use(errorHandler)
+  .use(notFound);

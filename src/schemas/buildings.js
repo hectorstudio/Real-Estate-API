@@ -10,4 +10,5 @@ export default new Schema({
   id: 'id',
   modifyDate: 'modify_date',
   name: 'name',
+  portfolioId: 'portfolio_id',
 });
