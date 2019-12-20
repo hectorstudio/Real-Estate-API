@@ -1,4 +1,6 @@
 import express from 'express';
+import fs from 'fs';
+import path from 'path';
 
 import auth from '../middlewares/auth';
 import userSchema from '../schemas/users';
@@ -9,6 +11,9 @@ import {
   updateAccount,
   verifyAccount,
 } from '../controllers/users';
+import { upload } from '../config/upload';
+import { filesBucket } from '../config/storage';
+import { STORAGE_PATHS } from '../constants';
 
 const router = express.Router();
 
@@ -65,8 +70,9 @@ router.patch('/', auth, (req, res) => {
 
   getUserByFirebaseID(res.uid)
     .then((user) => {
-      updateAccount(user.id, values)
+      updateAccount(user.id, userSchema.toDb(values))
         .then((data) => {
+          console.log(values);
           const response = userSchema.toJs(data.rows[0]);
           res.status(200).json(response);
         })
@@ -89,6 +95,45 @@ router.patch('/verify', auth, (req, res) => {
         res.status(500).json(err);
         console.error(err);
       }));
+});
+
+// POST user photo image upload
+router.post('/photo', upload.single('file'), auth, (req, res) => {
+  const { file } = req;
+
+  const extension = file.originalname.split('.').reverse()[0];
+
+  getUserByFirebaseID(res.uid)
+    .then((user) => {
+      const options = {
+        destination: STORAGE_PATHS.user.photo(user.id, `${file.filename}.${extension}`),
+        public: true,
+      };
+      filesBucket.upload(file.path, options)
+        .then((fileResponse) => {
+          const { mediaLink } = fileResponse[1];
+          const values = {
+            photoUrl: mediaLink,
+          };
+          updateAccount(user.id, userSchema.toDb(values))
+            .then((data) => {
+              const response = userSchema.toJs(data.rows[0]);
+              res.status(200).json(response);
+
+              // Remove uploaded file
+              const localFilePath = path.join(global.projectPath, file.path);
+              fs.unlink(localFilePath, () => { });
+            })
+            .catch((err) => {
+              res.status(500).json(err);
+              console.error(err);
+            });
+        })
+        .catch((err) => {
+          res.status(500).json(err);
+          console.error(err);
+        });
+    });
 });
 
 export default router;

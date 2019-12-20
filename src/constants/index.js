@@ -10,4 +10,8 @@ export const FILE_STATUS = {
 export const STORAGE_PATHS = {
   buildingCover: (buildingId, fileName) => `buildings/${buildingId}/covers/${fileName}`,
   file: (buildingId, fileId) => `buildings/${buildingId}/files/${fileId}`,
+  user: {
+    photo: (userId) => `users/${userId}/profile`,
+    root: (userId) => `users/${userId}`,
+  },
 };

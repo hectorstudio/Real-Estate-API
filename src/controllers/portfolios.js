@@ -7,12 +7,12 @@ import { CONTENT_TYPES } from '../constants/permissions';
 export const getAllPortfolios = () => pool.query('SELECT * FROM portfolios');
 
 export const getPortfolios = (userId) => pool.query(`
-SELECT p.*
-FROM Portfolios p
-LEFT JOIN permissions p
-ON p.content_id = text(b.id)
-WHERE p.content_type = $1
-AND text(p.user_id) = $2
+SELECT po.*
+FROM Portfolios po
+LEFT JOIN permissions pe
+ON pe.content_id = text(po.id)
+WHERE pe.content_type = $1
+AND text(pe.user_id) = $2
 `, [CONTENT_TYPES.portfolios, userId]);
 
 export const getPortfolioById = (userId) => pool.query('SELECT * FROM portfolios WHERE id = $1', [userId]);
