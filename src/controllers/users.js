@@ -43,3 +43,8 @@ export const updateAccount = (userId, values) => pool.query(
   `UPDATE users SET ${updateValues(values)} WHERE id = $1 RETURNING *`,
   [userId],
 );
+
+export const clearUserProfilePhoto = (userId) => pool.query(
+  'UPDATE users SET photo_url = NULL WHERE id = $1 RETURNING *',
+  [userId],
+);

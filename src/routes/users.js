@@ -6,6 +6,7 @@ import auth from '../middlewares/auth';
 import userSchema from '../schemas/users';
 import {
   addNewUser,
+  clearUserProfilePhoto,
   getAllUsers,
   getUserByFirebaseID,
   updateAccount,
@@ -128,6 +129,21 @@ router.post('/photo', upload.single('file'), auth, (req, res) => {
               res.status(500).json(err);
               console.error(err);
             });
+        })
+        .catch((err) => {
+          res.status(500).json(err);
+          console.error(err);
+        });
+    });
+});
+
+router.delete('/photo', auth, (req, res) => {
+  getUserByFirebaseID(res.uid)
+    .then((user) => {
+      clearUserProfilePhoto(user.id)
+        .then((data) => {
+          const response = userSchema.toJs(data.rows[0]);
+          res.status(200).json(response);
         })
         .catch((err) => {
           res.status(500).json(err);
